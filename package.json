@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "dayjs-plugin-round",
+  "author": "michaelhazan",
+  "license": "MIT",
+  "version": "0.0.1",
+  "description": "A Dayjs plugin that adds a rounding function ",
+  "keywords": [
+    "dayjs",
+    "dayjs plugin",
+    "banker rounding",
+    "iso80000-1:2022",
+    "rounding",
+    "round"
+  ],
+  "files": [
+    "dist",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "scripts": {
+    "test": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "tsup",
+    "check-types": "tsc --noEmit",
+    "check-exports": "npm run build && attw --pack",
+    "release": "npm run build && changeset publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@changesets/cli": "^2.29.5",
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/types": "^19.8.1",
+    "@eslint/js": "^9.31.0",
+    "@faker-js/faker": "^10.1.0",
+    "dayjs": "^1.11.13",
+    "eslint": "^9.31.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "dayjs": "^1"
+  },
+  "packageManager": "pnpm@10.26.0+sha512.3b3f6c725ebe712506c0ab1ad4133cf86b1f4b687effce62a9b38b4d72e3954242e643190fc51fa1642949c735f403debd44f5cb0edd657abe63a8b6a7e1e402"
+}
