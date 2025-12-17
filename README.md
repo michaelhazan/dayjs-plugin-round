@@ -4,9 +4,6 @@
 > This repo's structure is originally [`dayjs-plugin-time`](https://github.com/ej-shafran/dayjs-plugin-time-interval).
 > go check it out!
 
-> [!NOTE]
-> This package requires the plugins: `arraySupport` and `toObject`
-
 This plugin add the `dayjs().round` function allowing you to round specified units
 
 For example:
