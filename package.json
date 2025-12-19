@@ -3,7 +3,7 @@
   "name": "dayjs-plugin-round",
   "author": "michaelhazan",
   "license": "MIT",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Dayjs plugin that adds a rounding function ",
   "keywords": [
     "dayjs",
