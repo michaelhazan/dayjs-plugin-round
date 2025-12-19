@@ -7,6 +7,6 @@ export default defineConfig((options) => ({
   dts: true,
   clean: true,
   minify: true,
-  treeshake: true,
+
   ...options,
 }));

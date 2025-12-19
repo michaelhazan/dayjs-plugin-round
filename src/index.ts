@@ -1,32 +1,15 @@
-import type {
-  PluginFunc,
-  Dayjs as NonPrivateDayjs,
-  UnitTypeLong as NonPrivateUnitTypeLong,
-  UnitType,
-} from "dayjs";
+import type dayjsType from "dayjs";
 
 // TODO: see how to handle months and years, cause of utc behavior can be kinda goofy
 type InternalRoundableUnit = Exclude<
-  UnitType,
+  dayjsType.UnitType,
   "M" | "month" | "months" | "y" | "year" | "years"
 >;
 
-declare module "dayjs" {
-  export interface Dayjs {
-    round(unit: RoundableUnit): NonPrivateDayjs;
-    // Expose internal utils
-    $utils(): {
-      p(unit: string): NonPrivateUnitTypeLong;
-    };
-  }
-
-  export type RoundableUnit = InternalRoundableUnit;
-}
-
-const plugin: PluginFunc = (_, Dayjs) => {
+const plugin: dayjsType.PluginFunc = (_, Dayjs) => {
   Dayjs.prototype.round = function (unit: InternalRoundableUnit) {
     const formattedUnit = Dayjs.prototype.$utils().p(unit);
-    const unitsToMax: [NonPrivateUnitTypeLong, number][] = [
+    const unitsToMax: [dayjsType.UnitTypeLong, number][] = [
       ["year", 1],
       ["month", 12],
       ["date", this.daysInMonth()],
@@ -54,7 +37,7 @@ const plugin: PluginFunc = (_, Dayjs) => {
         .map(([measurement], index) => [
           measurement,
           index === 0 ? newUnitNum : 0,
-        ]) as [NonPrivateUnitTypeLong, number][]
+        ]) as [dayjsType.UnitTypeLong, number][]
     ).reduce((instance, [measurement, timeUnit]) => {
       return instance.set(measurement, timeUnit);
     }, this.clone());
@@ -62,3 +45,15 @@ const plugin: PluginFunc = (_, Dayjs) => {
 };
 
 export default plugin;
+
+declare module "dayjs" {
+  export interface Dayjs {
+    round(unit: RoundableUnit): dayjsType.Dayjs;
+    // Expose internal utils
+    $utils(): {
+      p(unit: string): dayjsType.UnitTypeLong;
+    };
+  }
+
+  export type RoundableUnit = InternalRoundableUnit;
+}
