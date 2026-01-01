@@ -9,88 +9,152 @@ dayjs.extend(toObject);
 dayjs.extend(arraySupport);
 dayjs.extend(roundPlugin);
 
-describe("Round Plugin (Milliseconds)", () => {
-  const milliseconds = Array.from({ length: 60 }).map((_, millisecond) =>
-    dayjs()
-      .set("milliseconds", millisecond)
-      .set("seconds", faker.number.int({ min: 0, max: 59 })),
+const unitsToMax: [dayjs.UnitTypeLong, number][] = [
+  ["year", 1],
+  ["month", 12],
+  ["date", dayjs().daysInMonth()],
+  ["hour", 24],
+  ["minute", 60],
+  ["second", 60],
+  ["millisecond", 1000],
+] as const;
+
+export const getTimes = (unit: dayjs.RoundableUnit, amount?: number) => {
+  const unitIndex = unitsToMax.findIndex(([indexUnit]) => indexUnit === unit);
+  const lowerIndex =
+    unitIndex === unitsToMax.length - 1 ? unitsToMax.length - 2 : unitIndex + 1;
+  return Array.from({ length: amount ?? unitsToMax[unitIndex][1] }).map(
+    (_, time) =>
+      dayjs()
+        .set(
+          unit,
+          amount
+            ? time
+            : faker.number.int({ min: 0, max: unitsToMax[unitIndex][1] }),
+        )
+        .set(
+          unitsToMax[lowerIndex][0],
+          faker.number.int({ min: 0, max: unitsToMax[unitIndex][1] }),
+        ),
   );
+};
+
+const test = (
+  unit: dayjs.RoundableUnit,
+  toCheck: "round" | "floor" | "ceil",
+  expected: dayjs.Dayjs,
+  prior: dayjs.Dayjs,
+) => {
+  const result = prior[toCheck](unit);
+  it(`${toCheck} ${unit} - ${result.toISOString()} should equal to ${expected.toISOString()} which was ${prior.toISOString()}`, () => {
+    expect(prior[toCheck](unit).toISOString()).toEqual(expected.toISOString());
+  });
+};
+
+describe("Round Plugin (Milliseconds)", () => {
+  const milliseconds = getTimes("millisecond");
   milliseconds.forEach((millisecond) => {
     const formattedSecond =
-      millisecond.millisecond() >= 50
+      millisecond.millisecond() >= 500
         ? millisecond.set("milliseconds", Math.round(millisecond.millisecond()))
         : millisecond;
-    it(`${millisecond.round("milliseconds").toISOString()} should equal to ${formattedSecond.toISOString()} which was ${millisecond.toISOString()}`, () => {
-      expect(millisecond.round("milliseconds").toISOString()).toEqual(
-        formattedSecond.toISOString(),
-      );
-    });
+    test("millisecond", "round", formattedSecond, millisecond);
+  });
+
+  milliseconds.forEach((millisecond) => {
+    const formattedSecond = millisecond;
+
+    test("millisecond", "floor", formattedSecond, millisecond);
+  });
+  milliseconds.forEach((millisecond) => {
+    const formattedSecond = millisecond;
+
+    test("millisecond", "ceil", formattedSecond, millisecond);
   });
 });
 
 describe("Round Plugin (Seconds)", () => {
-  const seconds = Array.from({ length: 60 }).map((_, second) =>
-    dayjs()
-      .set("seconds", second)
-      .set("millisecond", faker.number.int({ min: 0, max: 1000 })),
-  );
+  const seconds = getTimes("second");
   seconds.forEach((second) => {
     const formattedSecond = (
       second.millisecond() >= 500 ? second.add(1, "second") : second
     ).millisecond(0);
-    it(`${second.round("seconds").toISOString()} should equal to ${formattedSecond.toISOString()} which was ${second.toISOString()}`, () => {
-      expect(second.round("seconds").toISOString()).toEqual(
-        formattedSecond.toISOString(),
-      );
-    });
+    test("second", "round", formattedSecond, second);
+  });
+
+  seconds.forEach((second) => {
+    const formattedSecond = second.millisecond(0);
+
+    test("second", "floor", formattedSecond, second);
+  });
+  seconds.forEach((second) => {
+    const formattedSecond = (
+      second.millisecond() > 0 ? second.add(1, "second") : second
+    ).millisecond(0);
+
+    test("second", "ceil", formattedSecond, second);
   });
 });
 
 describe("Round Plugin (Minutes)", () => {
-  const minutes = Array.from({ length: 60 }).map((_, minute) =>
-    dayjs()
-      .set("minute", minute)
-      .set("seconds", faker.number.int({ min: 0, max: 59 })),
-  );
+  const minutes = getTimes("minute");
   minutes.forEach((minute) => {
     const formattedMinute = (
       minute.second() >= 30 ? minute.add(1, "minute") : minute
     )
       .second(0)
       .millisecond(0);
-    it(`${minute.round("minutes").toISOString()} should equal to ${formattedMinute.toISOString()} which was ${minute.toISOString()}`, () => {
-      expect(minute.round("minutes").toISOString()).toEqual(
-        formattedMinute.toISOString(),
-      );
-    });
+    test("minute", "round", formattedMinute, minute);
+  });
+
+  minutes.forEach((minute) => {
+    const formattedMinute = minute.second(0).millisecond(0);
+
+    test("minute", "floor", formattedMinute, minute);
+  });
+  minutes.forEach((minute) => {
+    const formattedMinute = (
+      minute.second() + minute.millisecond() > 0
+        ? minute.add(1, "minutes")
+        : minute
+    )
+      .second(0)
+      .millisecond(0);
+
+    test("minute", "ceil", formattedMinute, minute);
   });
 });
 
 describe("Round Plugin (Hours)", () => {
-  const hours = Array.from({ length: 24 }).map((_, hour) =>
-    dayjs()
-      .set("hour", hour)
-      .set("minutes", faker.number.int({ min: 0, max: 59 })),
-  );
+  const hours = getTimes("hour");
   hours.forEach((hour) => {
     const formattedHour = (hour.minute() >= 30 ? hour.add(1, "hour") : hour)
       .minute(0)
       .second(0)
       .millisecond(0);
-    it(`${hour.round("hours").toISOString()} should equal to ${formattedHour.toISOString()} which was ${hour.toISOString()}`, () => {
-      expect(hour.round("hours").toISOString()).toEqual(
-        formattedHour.toISOString(),
-      );
-    });
+    test("hour", "round", formattedHour, hour);
+  });
+  hours.forEach((hour) => {
+    const formattedHour = hour.minute(0).second(0).millisecond(0);
+
+    test("hour", "floor", formattedHour, hour);
+  });
+  hours.forEach((hour) => {
+    const formattedHour = (
+      hour.minute() + hour.second() + hour.millisecond() > 0
+        ? hour.add(1, "hour")
+        : hour
+    )
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+
+    test("hour", "ceil", formattedHour, hour);
   });
 });
 
 describe("Round Plugin (Dates)", () => {
-  const dates = Array.from({ length: 31 }).map((_, date) =>
-    dayjs()
-      .set("date", date)
-      .set("hours", faker.number.int({ min: 0, max: 24 })),
-  );
+  const dates = getTimes("date");
 
   dates.forEach((date) => {
     const formattedDate = (date.hour() >= 12 ? date.add(1, "day") : date)
@@ -98,10 +162,24 @@ describe("Round Plugin (Dates)", () => {
       .minute(0)
       .second(0)
       .millisecond(0);
-    it(`${date.round("date").toISOString()} should equal to ${formattedDate.toISOString()} which was ${date.toISOString()}`, () => {
-      expect(date.round("date").toISOString()).toEqual(
-        formattedDate.toISOString(),
-      );
-    });
+    test("date", "round", formattedDate, date);
+  });
+  dates.forEach((date) => {
+    const formattedDate = date.hour(0).minute(0).second(0).millisecond(0);
+
+    test("date", "floor", formattedDate, date);
+  });
+  dates.forEach((date) => {
+    const formattedDate = (
+      date.hour() + date.minute() + date.second() + date.millisecond() > 0
+        ? date.add(1, "day")
+        : date
+    )
+      .hour(0)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+
+    test("date", "ceil", formattedDate, date);
   });
 });

@@ -7,5 +7,6 @@ export default defineConfig((options) => ({
   dts: true,
   clean: true,
   minify: true,
+  sourcemap: false,
   ...options,
 }));
