@@ -1,6 +1,6 @@
 # dayjs-plugin-round
 
-_This repo's structure is originally from [`dayjs-plugin-time`](https://github.com/ej-shafran/dayjs-plugin-time-interval)_
+_This repo's structure is originally from [`dayjs-plugin-time-interval`](https://github.com/ej-shafran/dayjs-plugin-time-interval)_
 
 This plugin adds the `dayjs().round`, `dayjs().floor` and `dayjs().ceil` functions allowing you to round, floor and ceil specified units
 
