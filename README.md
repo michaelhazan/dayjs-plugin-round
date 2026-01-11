@@ -4,16 +4,29 @@ _This repo's structure is originally from [`dayjs-plugin-time-interval`](https:/
 
 This plugin adds the `dayjs().round`, `dayjs().floor` and `dayjs().ceil` functions allowing you to round, floor and ceil specified units
 
-## Examples
+## Installation & Setup
 
-### Rounding
+```bash
+npm i dayjs dayjs-plugin-plugin
+# or
+pnpm i dayjs dayjs-plugin-round
+# etc...
+```
+
+Then, just extend the plugin:
 
 ```ts
 import dayjs from "dayjs";
 import round from "dayjs-plugin-round";
 
 dayjs.extend(round);
+```
 
+## Examples
+
+### Rounding
+
+```ts
 const x = dayjs("2025-12-16T12:25:00");
 
 const y = x.round("hours");
@@ -36,11 +49,6 @@ v.toISOString(); // "2025-12-17T00:00:00.000Z"
 ### Flooring
 
 ```ts
-import dayjs from "dayjs";
-import round from "dayjs-plugin-round";
-
-dayjs.extend(round);
-
 const x = dayjs("2025-12-16T12:25:00");
 
 const y = x.floor("hours");
@@ -63,11 +71,6 @@ v.toISOString(); // "2025-12-16T00:00:00.000Z"
 ### Ceiling
 
 ```ts
-import dayjs from "dayjs";
-import round from "dayjs-plugin-round";
-
-dayjs.extend(round);
-
 const x = dayjs("2025-12-16T12:25:00");
 
 const y = x.ceil("hours");
